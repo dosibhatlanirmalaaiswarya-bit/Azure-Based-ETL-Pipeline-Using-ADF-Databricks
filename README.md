@@ -19,6 +19,9 @@ It showcases how to combine cloud-native tools for scalable, maintainable, and p
 | Data Warehouse / Lake (e.g. Azure Storage / Delta Lake) | Storage of raw and processed data (bronze/silver/gold layers) |
 | Power BI | Dashboards and reporting layer — visualizes processed data for analytics & insights |
 
+#  Architecture Diagram 
+![Diagram](Azure Architecture Diagram.jpg)
+
 ## Features  
 - Modular ETL/ELT pipeline with layered data storage (raw → processed → analytics)  
 - Scalable using cloud infrastructure (Azure + Databricks)  
