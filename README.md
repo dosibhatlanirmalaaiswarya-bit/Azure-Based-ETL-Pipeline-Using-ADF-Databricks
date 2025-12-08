@@ -22,7 +22,7 @@ The pipeline is built on an ELT (Extract, Load, Transform) framework, leveraging
 | **Delta Lake** | **Reliability & ACID Properties** | The open-source storage layer used within Databricks/ADLS to bring reliability (ACID transactions, versioning) to the data lake. |
 
 ## Overall Architecture Diagram
-
+![ArchitectureDiag](https://raw.githubusercontent.com/dosibhatlanirmalaaiswarya-bit/Azure-Based-ETL-Pipeline-Using-ADF-Databricks/main/Azure%20Architecture%20Diagram.jpg)
 
 ### Medallion Architecture Explained
 
