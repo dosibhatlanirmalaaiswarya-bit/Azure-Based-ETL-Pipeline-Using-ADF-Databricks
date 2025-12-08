@@ -1,54 +1,100 @@
-# End-to-End Azure Data Engineering Project 🚀
-
-A full-stack data engineering pipeline built with Azure Data Factory (ADF), Azure Databricks, and Azure Data Lake, designed to ingest, transform, and deliver analytics-ready data for downstream BI and ML use cases. This project focuses on production-style patterns: orchestration, medallion architecture, and scalable data transformations. 
+# 🚀 Azure-Based ETL Pipeline: ADF and Databricks
 
 ---
 
-## Business Problem
+## 💡 Project Goal
 
-Analytics teams often work with scattered source systems (ERP, CRM, flat files, APIs) and manual data refreshes, making it difficult to maintain a single, trusted view of business performance. This project demonstrates how to use Azure-native tools to automate ingestion, transformations, and delivery of curated data layers for reliable reporting and advanced analytics.
+This repository implements a **modern, scalable, and resilient End-to-End Data Engineering Pipeline** using core services within the **Microsoft Azure** cloud ecosystem. The goal is to ingest raw data, transform it using powerful Spark processing, and deliver analytics-ready data layers for business intelligence (BI) and machine learning (ML) consumption.
 
----
-
-## Technical Overview
-
-This repository implements an end-to-end Azure data engineering workflow that:
-
-- Ingests raw data from one or more source systems (e.g., CSV/Blob storage, operational databases, APIs) into a raw “bronze” layer.
-- Cleanses, validates, and transforms data in Azure Databricks using Spark, producing curated “silver” and “gold” tables.
-- Stores data in a lakehouse-style architecture (Azure Data Lake / Delta Lake) to support batch analytics and potential ML workloads.
-- Exposes modeled gold-layer tables to Power BI (or any BI tool) for KPI tracking and business dashboards. [attached_file:1]
-
-The emphasis is on reusable patterns (orchestration, layering, data quality) rather than any single dataset.
+This project focuses on production-style patterns, including automated **orchestration**, implementation of the **Medallion Architecture**, and **scalable PySpark transformations**.
 
 ---
 
-## Architecture
-![DataArchitecture](https://github.com/dosibhatlanirmalaaiswarya-bit/Azure-Based-ETL-Pipeline-Using-ADF-Databricks/blob/081145f8fa6e4921ba4f6a7ab98054a8a74e9cd9/Azure%20Architecture%20Diagram.jpg)
-### Components
+## ☁️ Architectural Overview and Components
 
-| Component                        | Responsibility                                                                 |
-|----------------------------------|-------------------------------------------------------------------------------|
-| Azure Data Factory (ADF)        | Orchestrates pipelines, scheduling, triggers, and data movement              |
-| Azure Databricks                | Executes PySpark notebooks for cleansing, joins, aggregations, business logic|
-| Azure Data Lake / Delta Lake    | Stores bronze, silver, and gold data layers with partitioning as needed      |
-| Power BI (optional)             | Connects to gold tables/views for dashboards and self-service analytics      | 
+The pipeline is built on an ELT (Extract, Load, Transform) framework, leveraging the strengths of each Azure service:
 
-### Medallion Architecture
+| Component | Responsibility | Concept |
+| :--- | :--- | :--- |
+| **Azure Data Factory (ADF)** | **Orchestration & Data Movement** | The serverless tool used to sequence and schedule the entire workflow (pipeline), controlling data ingestion and triggering transformation jobs. |
+| **Azure Databricks** | **Scalable Data Transformation** | A fast, powerful, Apache Spark-based analytics platform used to run the complex transformation logic written in PySpark. |
+| **Azure Data Lake Storage (ADLS)** | **Data Lakehouse Storage** | Provides tiered, scalable, and cost-effective storage for all data layers (Bronze, Silver, Gold). |
+| **Delta Lake** | **Reliability & ACID Properties** | The open-source storage layer used within Databricks/ADLS to bring reliability (ACID transactions, versioning) to the data lake. |
 
-- Bronze: Raw ingested data, minimally processed, stored as-is from source.
-- Silver: Cleaned, conformed data with standardized types, deduplication, and basic business rules.
-- Gold: Aggregated, analytics-ready tables optimized for reporting and KPI monitoring.
+## Overall Architecture Diagram
+
+
+### Medallion Architecture Explained
+
+Data is segregated into three distinct layers within the **Azure Data Lake** to ensure quality, traceability, and governance:
+
+| Layer | State | Purpose in Pipeline |
+| :--- | :--- | :--- |
+| **🥉 Bronze** | **Raw Data** | Stores data *as-is* immediately after ingestion from the source. Provides an immutable historical record. |
+| **🥈 Silver** | **Cleaned & Conformed Data** | Data is cleansed, standardized, de-duplicated, and integrated across sources. Ready for detailed exploration. |
+| **🥇 Gold** | **Curated & Aggregated Data** | Highly refined, aggregated, and modeled (e.g., Star Schema) data optimized for fast BI reporting (Power BI) and ML training. |
 
 ---
 
-## Data Engineering Features
+## ⚙️ Detailed Pipeline Steps
 
-- End-to-end ETL/ELT pipeline built on Azure (ADF + Databricks + Data Lake).
-- Medallion architecture (Bronze → Silver → Gold) for clear lineage and separation of concerns.
-- Parameterized ADF pipelines for reusable ingestion patterns and environment-specific configuration.
-- PySpark transformations for:
-  - Data cleansing and type casting.
-  - Joins across multiple sources.
-  - Incremental loads and aggregations for KPI
+The entire workflow is orchestrated by a single **Azure Data Factory Pipeline**, executing tasks sequentially:
 
+### Step 1: Data Ingestion (ADF to Bronze)
+
+* **Action:** ADF's Copy Activity extracts raw data (e.g., from source JSON files like `customers.json` and `products.json`) and loads it directly into a designated **Bronze Layer** folder in **ADLS**.
+* **Goal:** Establish an immutable record of the raw source data.
+
+### Step 2: Transformation and Cleansing (Databricks - Silver Layer)
+
+* **Action:** ADF triggers an **Azure Databricks Notebook Activity**, executing the `ETL_Notebook.ipynb`.
+* **Process (PySpark):** The notebook performs the ETL logic:
+    1.  Reads raw data from the Bronze Layer using Spark.
+    2.  Applies data cleansing (e.g., handling nulls, type casting).
+    3.  Applies standardization and deduplication.
+    4.  Writes the cleaned data back to the **Silver Layer** (typically using Delta Lake format for reliability).
+
+### Step 3: Business Logic and Aggregation (Databricks - Gold Layer)
+
+* **Action:** The Databricks notebook continues execution, focusing on business requirements.
+* **Process (PySpark):**
+    1.  Reads the cleaned data from the Silver Layer.
+    2.  Performs complex **joins** (e.g., combining customer and product data).
+    3.  Applies business logic and **aggregations** (e.g., calculating total sales per product category or customer lifetime value).
+    4.  Writes the final, modeled data to the **Gold Layer** (Delta Lake format), creating the reporting tables.
+
+### Step 4: Data Consumption
+
+* **Result:** The Gold Layer tables are now ready to be consumed. Downstream applications, such as **Power BI**, connect directly to the curated tables to generate real-time dashboards and reports.
+
+---
+
+## 📂 Repository Contents
+
+The key files in this repository demonstrate the components necessary for the pipeline:
+
+| File Name | Description | Role in Pipeline |
+| :--- | :--- | :--- |
+| `ETL_Notebook.ipynb` | The core transformation logic, written in **PySpark** (Python + Spark API). | Executes Steps 2 & 3 (Silver and Gold transformations). |
+| `Azure Architecture Diagram.jpg` | Visual representation of the data flow and cloud services integration. | Documentation/Reference |
+| `customers.json` | Sample raw JSON file representing source Customer data. | Input Source Data |
+| `products.json` | Sample raw JSON file representing source Product data. | Input Source Data |
+| `README.md` | This documentation file. | Documentation |
+
+---
+
+## ✅ Data Engineering Features
+
+* **End-to-End ELT/ETL:** Full pipeline demonstrated from raw ingestion to reporting-ready data.
+* **Scalability:** Leverages Spark via Databricks for massive parallel processing of data transformation.
+* **Orchestration:** Uses ADF to manage dependencies, scheduling, and environment parameterization.
+* **Data Quality:** Enforcement of data quality standards via the Medallion Architecture.
+
+---
+
+## 🤝 Contribution & Contact
+
+Feel free to fork this repository and explore the implementation details of a modern cloud-based data pipeline.
+
+* **Author:** dosibhatlanirmalaaiswarya-bit
+* **GitHub:** [dosibhatlanirmalaaiswarya-bit](https://github.com/dosibhatlanirmalaaiswarya-bit)
