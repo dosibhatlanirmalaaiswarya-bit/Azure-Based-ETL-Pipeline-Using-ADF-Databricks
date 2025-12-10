@@ -68,6 +68,8 @@ The entire workflow is orchestrated by a single **Azure Data Factory Pipeline**,
 * **Result:** The Gold Layer tables are now ready to be consumed. Downstream applications, such as **Power BI**, connect directly to the curated tables to generate real-time dashboards and reports.
 
 ---
+## Copy Data Activity in Azure Data Factory
+![datafactory](https://github.com/dosibhatlanirmalaaiswarya-bit/Azure-Based-ETL-Pipeline-Using-ADF-Databricks/blob/5ba51f6e9dab482e9486652a7c7f7d3939c27928/Azure_DataFactory_Photo.jpg)
 
 ## 📂 Repository Contents
 
